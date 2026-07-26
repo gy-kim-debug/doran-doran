@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>화면 설계 — 도란도란 (핵심 플로우)</title>
+<style>
+  :root{
+    --green:#1a6f5c; --green-bg:#e6f0ec; --green-light:#eef4f1;
+    --blue:#2f6fed; --blue-bg:#eaf1ff;
+    --orange:#c8790a; --orange-bg:#fdf1e0;
+    --ink:#1c2320; --sub:#6b7570; --line:#e3e3e3;
+    --a-me:#1a6f5c; --a-mom:#d9598a; --a-dad:#3b6fd9; --a-sis:#8b5cf6;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:#f2f4f3; color:var(--ink);
+    font-family:'Malgun Gothic','Apple SD Gothic Neo','Segoe UI',sans-serif;
+  }
+  .page-head{max-width:1180px; margin:0 auto; padding:40px 24px 8px}
+  .page-head h1{font-size:24px; margin:0 0 6px; color:var(--green)}
+  .page-head p{color:var(--sub); font-size:13.5px; margin:0}
+  .page-head .stack{display:inline-block; background:var(--green); color:#fff; font-size:12px; font-weight:bold; padding:3px 10px; border-radius:5px; margin-top:10px}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:8px 24px 100px}
+
+  .screen-block{display:flex; gap:36px; align-items:flex-start; padding:44px 0; border-top:1px solid var(--line)}
+  .screen-block:first-of-type{border-top:none}
+
+  .no-tag{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; background:var(--green); color:#fff; font-size:13px; font-weight:bold; border-radius:7px; margin-right:8px}
+
+  /* phone frame */
+  .phone{width:320px; flex-shrink:0; background:#111; border-radius:38px; padding:12px; box-shadow:0 24px 50px rgba(20,30,25,.22)}
+  .phone-inner{position:relative; width:100%; height:660px; background:#fafbfa; border-radius:26px; overflow:hidden; display:flex; flex-direction:column}
+  .notch{position:absolute; top:0; left:50%; transform:translateX(-50%); width:100px; height:22px; background:#111; border-radius:0 0 14px 14px; z-index:5}
+  .status-bar{height:36px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-weight:700; background:#fff}
+  .status-bar .icons{font-size:11px; letter-spacing:1px}
+  .app-top{flex-shrink:0; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center; padding:0 14px; height:48px; font-weight:bold; font-size:14.5px; gap:8px}
+  .app-top .back{color:var(--sub); font-size:16px}
+  .app-top .right{margin-left:auto; font-size:12.5px; color:var(--green); font-weight:bold}
+  .content{flex:1; overflow-y:auto; background:#fafbfa; -ms-overflow-style:none; scrollbar-width:none}
+  .content::-webkit-scrollbar{display:none}
+  .bottom-nav{flex-shrink:0; height:58px; background:#fff; border-top:1px solid var(--line); display:flex; align-items:center; position:relative}
+  .bottom-nav .tab{flex:1; text-align:center; font-size:10.5px; color:var(--sub)}
+  .bottom-nav .tab.active{color:var(--green); font-weight:bold}
+  .bottom-nav .tab .ic{display:block; font-size:16px; margin-bottom:2px}
+  .fab{position:absolute; right:16px; bottom:70px; width:46px; height:46px; border-radius:50%; background:var(--green); color:#fff; font-size:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 18px rgba(26,111,92,.4)}
+
+  /* avatars */
+  .av{display:inline-flex; align-items:center; justify-content:center; border-radius:50%; color:#fff; font-weight:bold; font-size:11px; flex-shrink:0}
+  .av-me{background:var(--a-me)} .av-mom{background:var(--a-mom)} .av-dad{background:var(--a-dad)} .av-sis{background:var(--a-sis)}
+
+  /* tags */
+  .tag{display:inline-block; font-size:10.5px; font-weight:bold; padding:2px 8px; border-radius:5px}
+  .tag-daily{background:var(--blue-bg); color:var(--blue)}
+  .tag-plan{background:var(--green-bg); color:var(--green)}
+  .tag-health{background:var(--orange-bg); color:var(--orange)}
+
+  /* generic card */
+  .card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 13px; margin:0 12px 10px}
+  .card .meta{display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--sub); margin-bottom:6px}
+  .card .name{color:var(--ink); font-weight:bold; font-size:12.5px}
+  .card .body{font-size:13px; line-height:1.5; margin:4px 0 8px}
+  .read-row{display:flex; align-items:center; gap:4px; font-size:10.5px; color:var(--sub)}
+  .read-row .mini{width:18px; height:18px; font-size:8.5px; margin-right:-6px; border:1.5px solid #fff}
+
+  .remind-card{margin:10px 12px 14px; background:#fff8ef; border:1px solid #e8d5b5; border-radius:12px; padding:14px}
+  .remind-card .big{font-size:13.5px; font-weight:bold; color:#a4590f}
+  .remind-card .d{display:inline-block; background:#c0392b; color:#fff; font-size:10.5px; font-weight:bold; padding:1px 7px; border-radius:5px; margin-left:6px}
+
+  .story-row{display:flex; gap:10px; padding:12px 14px 6px; overflow-x:auto}
+  .story{display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0}
+  .story .av{width:42px; height:42px; font-size:14px; border:2px solid var(--green)}
+  .story span{font-size:10px; color:var(--sub)}
+
+  .chip-row{display:flex; gap:7px; padding:8px 14px; overflow-x:auto}
+  .chip{flex-shrink:0; font-size:11.5px; padding:5px 12px; border-radius:16px; background:#fff; border:1px solid var(--line); color:var(--sub)}
+  .chip.active{background:var(--green); border-color:var(--green); color:#fff; font-weight:bold}
+
+  .section-title{font-size:12px; font-weight:bold; color:var(--sub); padding:14px 14px 6px; letter-spacing:.3px}
+
+  /* description panel */
+  .desc-panel{flex:1; min-width:340px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:26px 28px}
+  .desc-panel h2{font-size:17px; margin:0 0 4px; color:var(--ink)}
+  .desc-panel .sub{color:var(--green); font-size:12.5px; font-weight:bold; margin-bottom:16px}
+  .desc-panel h4{font-size:12.5px; color:var(--green); margin:18px 0 6px; text-transform:uppercase; letter-spacing:.4px}
+  .desc-panel h4:first-of-type{margin-top:0}
+  .desc-panel ul{margin:0; padding-left:18px; font-size:13.5px; line-height:1.7}
+  .desc-panel li{margin:3px 0}
+  .desc-panel p.note{background:var(--green-light); border-radius:8px; padding:10px 12px; font-size:12.5px; color:var(--sub); margin-top:16px}
+
+  @media (max-width:760px){
+    .screen-block{flex-direction:column; align-items:center}
+    .phone{width:300px}
+  }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>화면 설계 — 도란도란</h1>
+  <p>핵심 플로우 6화면 · 앱 내 웹뷰(WebView) 기준 모바일 UI 목업 · 좌: 화면 / 우: 설명</p>
+  <span class="stack">웹뷰 기준 375px 폭 · 상태바/노치는 네이티브 앱 셸 표현용(웹뷰 내부 아님)</span>
+</div>
+
+<div class="wrap">
+
+  <!-- 1. 가족 그룹 생성/초대 -->
+  <div class="screen-block">
+    <div class="phone"><div class="phone-inner">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><span class="icons">📶 🛜 🔋</span></div>
+      <div class="app-top"><span class="back">←</span> 가족 그룹 만들기</div>
+      <div class="content">
+        <div style="padding:16px 16px 4px">
+          <div style="font-size:11.5px;color:var(--sub);font-weight:bold;margin-bottom:6px">그룹 이름</div>
+          <div style="border:1px solid var(--line);border-radius:9px;padding:11px 12px;font-size:13.5px;background:#fff">우리 가족</div>
+        </div>
+        <div style="padding:16px 16px 4px">
+          <div style="font-size:11.5px;color:var(--sub);font-weight:bold;margin-bottom:8px">나의 호칭</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="chip active">딸</span><span class="chip">아들</span><span class="chip">엄마</span><span class="chip">아빠</span><span class="chip">기타</span>
+          </div>
+        </div>
+        <div class="section-title" style="padding-top:20px">구성원 초대하기</div>
+        <div style="padding:0 16px 8px">
+          <div style="display:flex;align-items:center;gap:8px;background:#fee500;border-radius:9px;padding:11px;font-size:13px;font-weight:bold;color:#3c1e1e">💬 카카오톡으로 초대 링크 보내기</div>
+        </div>
+        <div style="padding:6px 16px">
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 2px">
+            <span class="av av-me" style="width:30px;height:30px">나</span>
+            <span style="font-size:12.5px;font-weight:bold">나 (딸)</span>
+            <span style="margin-left:auto;font-size:10.5px;color:var(--green);font-weight:bold">참여완료</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 2px">
+            <span class="av av-mom" style="width:30px;height:30px">엄</span>
+            <span style="font-size:12.5px;font-weight:bold">엄마</span>
+            <span style="margin-left:auto;font-size:10.5px;color:var(--sub)">초대장 발송됨</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 2px">
+            <span class="av av-dad" style="width:30px;height:30px">아</span>
+            <span style="font-size:12.5px;font-weight:bold">아빠</span>
+            <span style="margin-left:auto;font-size:10.5px;color:var(--sub)">초대장 발송됨</span>
+          </div>
+        </div>
+      </div>
+      <div style="flex-shrink:0;padding:12px 16px;background:#fff;border-top:1px solid var(--line)">
+        <div style="background:var(--green);color:#fff;text-align:center;padding:12px;border-radius:10px;font-weight:bold;font-size:13.5px">그룹 만들고 시작하기</div>
+      </div>
+    </div></div>
+
+    <div class="desc-panel">
+      <span class="no-tag">1</span><h2 style="display:inline">가족 그룹 생성 / 초대</h2>
+      <div class="sub">온보딩 · 최초 1회</div>
+      <h4>목적</h4>
+      <ul><li>앱의 정체성인 "닫힌 가족 피드"를 시작하는 진입점. 외부와 완전히 분리된 그룹 단위를 먼저 만든다.</li></ul>
+      <h4>주요 구성요소</h4>
+      <ul>
+        <li>그룹 이름 입력 (기본값 "우리 가족", 수정 가능)</li>
+        <li>호칭 선택 칩 — 피드에서 이름 대신 호칭으로 표시(딸/아들/엄마/아빠/기타)</li>
+        <li>초대 링크 공유 버튼(카카오톡) — 네이티브 공유 시트 호출</li>
+        <li>초대 현황 리스트 — 참여완료 / 초대장 발송됨 상태 표시</li>
+      </ul>
+      <h4>인터랙션</h4>
+      <ul>
+        <li>공유 버튼 탭 → 웹뷰가 네이티브 앱 셸에 공유 인텐트 요청 → 카카오톡 공유 시트 오픈</li>
+        <li>초대받은 가족이 링크로 참여 수락 시, 목록의 상태가 "초대장 발송됨" → "참여완료"로 실시간 갱신</li>
+        <li>"그룹 만들고 시작하기" 탭 → 화면2(메인 피드)로 이동</li>
+      </ul>
+      <p class="note">데모 범위: 사전준비(40%)에서 UI 골격 + 기본 CRUD, 스프린톤 데이(85%)에서 실시간 상태 갱신까지 구현.</p>
+    </div>
+  </div>
+
+  <!-- 2. 메인 피드 -->
+  <div class="screen-block">
+    <div class="phone"><div class="phone-inner">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><span class="icons">📶 🛜 🔋</span></div>
+      <div class="app-top">우리 가족 ▾ <span class="right">🔔</span></div>
+      <div class="content">
+        <div class="story-row">
+          <div class="story"><span class="av av-me">나</span><span>나</span></div>
+          <div class="story"><span class="av av-mom">엄</span><span>엄마</span></div>
+          <div class="story"><span class="av av-dad">아</span><span>아빠</span></div>
+          <div class="story"><span class="av av-sis">동</span><span>동생</span></div>
+        </div>
+        <div class="chip-row">
+          <span class="chip active">전체</span><span class="chip">안부</span><span class="chip">일정</span><span class="chip">건강</span>
+        </div>
+
+        <div class="remind-card">
+          <span class="big">🎂 엄마 생신</span><span class="d">D-3</span>
+          <div style="font-size:12px;color:#8a5a20;margin:6px 0 10px">3월 8일 (토) · 작년엔 다같이 저녁을 먹었어요</div>
+          <div style="display:inline-block;background:#fff;border:1px solid #e8d5b5;color:#a4590f;font-size:11.5px;font-weight:bold;padding:6px 11px;border-radius:8px">축하 메시지 남기기</div>
+        </div>
+
+        <div class="card">
+          <div class="meta"><span class="av av-mom" style="width:20px;height:20px;font-size:9px">엄</span><span class="name">엄마</span><span class="tag tag-daily">안부</span><span style="margin-left:auto">2시간 전</span></div>
+          <div class="body">오늘 병원 다녀옴~ 별 이상 없대 :)</div>
+          <div class="read-row"><span class="av av-me mini">나</span><span class="av av-dad mini">아</span> 읽음 · 동생 안 읽음</div>
+        </div>
+
+        <div class="card">
+          <div class="meta"><span class="av av-dad" style="width:20px;height:20px;font-size:9px">아</span><span class="name">아빠</span><span class="tag tag-plan">일정</span><span style="margin-left:auto">어제</span></div>
+          <div class="body">📅 아버지 건강검진 · 3/5(수) 오전 10시</div>
+          <div class="read-row"><span class="av av-me mini">나</span><span class="av av-mom mini">엄</span><span class="av av-sis mini">동</span> 전원 확인</div>
+        </div>
+
+        <div class="card">
+          <div class="meta"><span class="av av-me" style="width:20px;height:20px;font-size:9px">나</span><span class="name">나</span><span class="tag tag-health">건강</span><span style="margin-left:auto">3일 전</span></div>
+          <div class="body">✅ 혈압약 오늘도 챙겨 먹었어요</div>
+          <div class="read-row"><span class="av av-mom mini">엄</span> 읽음</div>
+        </div>
+      </div>
+      <div class="fab">＋</div>
+      <div class="bottom-nav">
+        <div class="tab active"><span class="ic">🏠</span>피드</div>
+        <div class="tab"><span class="ic">✅</span>할일</div>
+        <div class="tab"><span class="ic">🎁</span>리마인드</div>
+        <div class="tab"><span class="ic">⚙️</span>설정</div>
+      </div>
+    </div></div>
+
+    <div class="desc-panel">
+      <span class="no-tag">2</span><h2 style="display:inline">메인 피드</h2>
+      <div class="sub">코어 화면 · 하단 탭 1번</div>
+      <h4>목적</h4>
+      <ul><li>안부·일정·건강 3영역이 하나의 타임라인에 통합되고, 글마다 "누가 확인했는지"가 바로 보이는 것이 카톡 대비 핵심 차별점.</li></ul>
+      <h4>주요 구성요소</h4>
+      <ul>
+        <li>그룹 전환 드롭다운 + 알림 벨</li>
+        <li>구성원 아바타 스토리 행 (온라인 상태 표시용)</li>
+        <li>유형 필터 칩(전체/안부/일정/건강)</li>
+        <li>리마인드 하이라이트 카드 — 가족 이벤트 D-day, 별색 배경으로 구분</li>
+        <li>유형별 카드 — 색상 태그(안부=파랑/일정=초록/건강=주황) + 읽음 확인 아바타 스택</li>
+        <li>+ 플로팅 버튼(글쓰기), 하단 탭 바</li>
+      </ul>
+      <h4>인터랙션</h4>
+      <ul>
+        <li>카드 탭 → 화면4(읽음 확인 상세)로 이동</li>
+        <li>필터 칩 탭 → 해당 유형만 필터링</li>
+        <li>+ 버튼 탭 → 화면3(글쓰기)로 이동, 리마인드 카드의 "축하 메시지 남기기" → 화면6으로 이동</li>
+      </ul>
+      <p class="note">읽음 확인은 실시간성이 핵심 가치라 소켓/폴링으로 갱신. 무한스크롤 페이지네이션 적용.</p>
+    </div>
+  </div>
+
+  <!-- 3. 글 작성 -->
+  <div class="screen-block">
+    <div class="phone"><div class="phone-inner">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><span class="icons">📶 🛜 🔋</span></div>
+      <div class="app-top"><span class="back">✕</span> 글쓰기 <span class="right">게시</span></div>
+      <div class="content">
+        <div style="display:flex;border-bottom:1px solid var(--line)">
+          <div style="flex:1;text-align:center;padding:12px 0;font-size:13px;font-weight:bold;color:var(--blue);border-bottom:2px solid var(--blue)">안부</div>
+          <div style="flex:1;text-align:center;padding:12px 0;font-size:13px;color:var(--sub)">일정</div>
+          <div style="flex:1;text-align:center;padding:12px 0;font-size:13px;color:var(--sub)">건강</div>
+        </div>
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <span class="av av-me" style="width:26px;height:26px">나</span><span style="font-size:12.5px;font-weight:bold">나 (딸)</span>
+          </div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;color:var(--sub);min-height:90px">가족에게 전할 소식을 적어주세요</div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <div style="width:60px;height:60px;border:1px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--sub)">📷</div>
+          </div>
+        </div>
+        <div style="margin:0 16px;padding:12px;background:var(--green-light);border-radius:10px;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:12.5px;font-weight:bold">할 일로도 등록하기</span>
+          <span style="width:34px;height:19px;background:var(--green);border-radius:10px;position:relative"><span style="position:absolute;right:2px;top:2px;width:15px;height:15px;background:#fff;border-radius:50%"></span></span>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="desc-panel">
+      <span class="no-tag">3</span><h2 style="display:inline">글 작성 (3유형)</h2>
+      <div class="sub">피드 + 버튼으로 진입 · 모달/스택 화면</div>
+      <h4>목적</h4>
+      <ul><li>안부·일정·건강 3유형을 하나의 작성 화면에서 다루되, 유형별로 입력 폼이 달라지는 구조.</li></ul>
+      <h4>주요 구성요소 및 유형별 차이</h4>
+      <ul>
+        <li><b>안부</b>(표시된 상태) — 자유 텍스트 + 사진 첨부</li>
+        <li><b>일정</b> — 날짜/시간 선택기 + 제목 입력 폼으로 전환</li>
+        <li><b>건강</b> — 카테고리 칩(복약/검진/증상) + 날짜 + 메모 폼으로 전환</li>
+        <li>공통: "할 일로도 등록하기" 토글 — 켜면 화면5(할 일)에도 동시 등록</li>
+      </ul>
+      <h4>인터랙션</h4>
+      <ul>
+        <li>상단 세그먼트(안부/일정/건강) 탭 → 하단 입력 폼 전체가 교체됨</li>
+        <li>"게시" 탭 → 피드 최상단에 새 카드로 추가, 화면2로 복귀</li>
+      </ul>
+      <p class="note">경량 AI(선택 기능): 본문 입력 시 유형 자동 추천, 일정 텍스트에서 날짜·할 일 자동 추출.</p>
+    </div>
+  </div>
+
+  <!-- 4. 읽음 확인 상세 -->
+  <div class="screen-block">
+    <div class="phone"><div class="phone-inner">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><span class="icons">📶 🛜 🔋</span></div>
+      <div class="app-top"><span class="back">←</span> 게시물</div>
+      <div class="content">
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span class="av av-mom" style="width:30px;height:30px">엄</span>
+            <div><div style="font-size:13px;font-weight:bold">엄마</div><div style="font-size:10.5px;color:var(--sub)">2시간 전</div></div>
+            <span class="tag tag-daily" style="margin-left:auto">안부</span>
+          </div>
+          <div style="font-size:13.5px;line-height:1.6;margin-bottom:16px">오늘 병원 다녀옴~ 별 이상 없대 :) 다들 밥 잘 챙겨 먹고 있어?</div>
+        </div>
+        <div class="section-title">읽음 확인 (2/3)</div>
+        <div style="padding:0 16px">
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0">
+            <span class="av av-me" style="width:28px;height:28px">나</span><span style="font-size:12.5px;font-weight:bold">나</span>
+            <span style="margin-left:auto;font-size:10.5px;color:var(--green);font-weight:bold">✓ 확인함 · 1시간 전</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0">
+            <span class="av av-dad" style="width:28px;height:28px">아</span><span style="font-size:12.5px;font-weight:bold">아빠</span>
+            <span style="margin-left:auto;font-size:10.5px;color:var(--green);font-weight:bold">✓ 확인함 · 40분 전</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;opacity:.5">
+            <span class="av av-sis" style="width:28px;height:28px">동</span><span style="font-size:12.5px;font-weight:bold">동생</span>
+            <span style="margin-left:auto;font-size:10.5px;color:var(--sub)">안 읽음</span>
+          </div>
+        </div>
+        <div class="section-title">댓글</div>
+        <div class="card" style="margin-top:0">
+          <div class="meta"><span class="av av-me" style="width:18px;height:18px;font-size:8px">나</span><span class="name">나</span><span style="margin-left:auto">50분 전</span></div>
+          <div class="body" style="margin-bottom:0">다행이다 엄마! 무리하지 마</div>
+        </div>
+      </div>
+      <div style="flex-shrink:0;padding:10px 14px;background:#fff;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center">
+        <div style="flex:1;border:1px solid var(--line);border-radius:18px;padding:9px 14px;font-size:12.5px;color:var(--sub)">댓글 남기기...</div>
+      </div>
+    </div></div>
+
+    <div class="desc-panel">
+      <span class="no-tag">4</span><h2 style="display:inline">읽음 확인 상세</h2>
+      <div class="sub">피드 카드 탭 시 진입 · 스택 화면</div>
+      <h4>목적</h4>
+      <ul><li>"봤는지·챙겼는지가 남는다"는 서비스의 핵심 가치를 가장 직접적으로 보여주는 화면. 구성원별 확인 여부와 시각을 명시적으로 노출.</li></ul>
+      <h4>주요 구성요소</h4>
+      <ul>
+        <li>게시물 원문 + 작성자/시간/유형 태그</li>
+        <li>읽음 확인 리스트 — 확인함(시각 포함) / 안 읽음(회색 처리)을 구성원별로 명확히 구분</li>
+        <li>댓글 스레드 + 하단 고정 댓글 입력창</li>
+      </ul>
+      <h4>인터랙션</h4>
+      <ul>
+        <li>화면 진입 시 자동으로 "읽음" 이벤트 발생 → 본인 상태가 "확인함"으로 갱신되고 다른 가족의 피드 카드에도 실시간 반영</li>
+        <li>안 읽은 구성원에게는 추후 알림(푸시)으로 리마인드 가능 (Phase2 검토)</li>
+      </ul>
+      <p class="note">본선 데모 핵심 시연 포인트: 2~3개 계정으로 동시에 열어 읽음 상태가 실시간으로 바뀌는 것을 직접 보여준다.</p>
+    </div>
+  </div>
+
+  <!-- 5. 할 일 -->
+  <div class="screen-block">
+    <div class="phone"><div class="phone-inner">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><span class="icons">📶 🛜 🔋</span></div>
+      <div class="app-top">할 일</div>
+      <div class="content">
+        <div style="padding:14px 16px 8px">
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--sub);margin-bottom:6px"><span>이번주 진행률</span><span>3/5 완료</span></div>
+          <div style="height:8px;background:var(--green-light);border-radius:5px;overflow:hidden"><div style="width:60%;height:100%;background:var(--green)"></div></div>
+        </div>
+        <div class="chip-row">
+          <span class="chip active">오늘</span><span class="chip">이번주</span><span class="chip">전체</span>
+        </div>
+        <div class="section-title">3월 5일 (수)</div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="width:20px;height:20px;border:2px solid var(--line);border-radius:5px;flex-shrink:0"></span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:bold">아버지 건강검진 동행</div><div style="font-size:11px;color:var(--sub)">담당: 나</div></div>
+          </div>
+        </div>
+        <div class="card" style="opacity:.55">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="width:20px;height:20px;background:var(--green);border-radius:5px;flex-shrink:0;color:#fff;font-size:13px;text-align:center;line-height:20px">✓</span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:bold;text-decoration:line-through">혈압약 사드리기</div><div style="font-size:11px;color:var(--sub)">담당: 동생 · 완료</div></div>
+          </div>
+        </div>
+        <div class="section-title">3월 8일 (토)</div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="width:20px;height:20px;border:2px solid var(--line);border-radius:5px;flex-shrink:0"></span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:bold">🎂 엄마 생신 케이크 준비</div><div style="font-size:11px;color:var(--sub)">담당: 나 · 리마인드에서 자동 등록</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="fab" style="bottom:22px">＋</div>
+      <div class="bottom-nav">
+        <div class="tab"><span class="ic">🏠</span>피드</div>
+        <div class="tab active"><span class="ic">✅</span>할일</div>
+        <div class="tab"><span class="ic">🎁</span>리마인드</div>
+        <div class="tab"><span class="ic">⚙️</span>설정</div>
+      </div>
+    </div></div>
+
+    <div class="desc-panel">
+      <span class="no-tag">5</span><h2 style="display:inline">할 일 등록·체크</h2>
+      <div class="sub">하단 탭 2번</div>
+      <h4>목적</h4>
+      <ul><li>피드에서 흘러가는 대신, "챙겨야 할 일"을 리스트로 남기고 완료 여부를 가족이 함께 확인하게 만드는 화면.</li></ul>
+      <h4>주요 구성요소</h4>
+      <ul>
+        <li>이번주 진행률 바 (완료/전체)</li>
+        <li>기간 필터 칩(오늘/이번주/전체)</li>
+        <li>날짜별 그룹핑된 할 일 리스트 — 체크박스, 담당자, 완료 시 취소선 처리</li>
+        <li>화면3에서 "할 일로도 등록" 토글 켠 게시물, 화면6 리마인드에서 파생된 항목도 여기 함께 표시</li>
+      </ul>
+      <h4>인터랙션</h4>
+      <ul>
+        <li>체크박스 탭 → 즉시 완료 처리 + 담당자 이름 옆에 "완료" 표시, 피드/리마인드 화면에도 반영</li>
+        <li>+ 버튼 → 할 일 직접 추가 모달</li>
+      </ul>
+      <p class="note">데모 시연 포인트: 한 구성원이 체크하면 다른 기기(다른 가족 계정)에서도 실시간으로 체크 표시가 바뀌는 것을 보여준다.</p>
+    </div>
+  </div>
+
+  <!-- 6. 리마인드 -->
+  <div class="screen-block">
+    <div class="phone"><div class="phone-inner">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><span class="icons">📶 🛜 🔋</span></div>
+      <div class="app-top">리마인드</div>
+      <div class="content">
+        <div class="remind-card" style="margin-top:14px">
+          <span class="big" style="font-size:15px">🎂 엄마 생신</span><span class="d">D-3</span>
+          <div style="font-size:12px;color:#8a5a20;margin:8px 0 12px">3월 8일 (토) · 작년엔 다같이 저녁을 먹었어요</div>
+          <div style="font-size:11px;color:var(--sub);margin-bottom:8px">가족 준비 현황</div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <div style="text-align:center"><span class="av av-me" style="width:30px;height:30px">나</span><div style="font-size:9.5px;color:var(--green);margin-top:3px">완료</div></div>
+            <div style="text-align:center"><span class="av av-dad" style="width:30px;height:30px;opacity:.4">아</span><div style="font-size:9.5px;color:var(--sub);margin-top:3px">대기</div></div>
+            <div style="text-align:center"><span class="av av-sis" style="width:30px;height:30px;opacity:.4">동</span><div style="font-size:9.5px;color:var(--sub);margin-top:3px">대기</div></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div style="flex:1;text-align:center;background:#fff;border:1px solid #e8d5b5;color:#a4590f;font-size:11.5px;font-weight:bold;padding:8px;border-radius:8px">축하 메시지 남기기</div>
+            <div style="flex:1;text-align:center;background:var(--green);color:#fff;font-size:11.5px;font-weight:bold;padding:8px;border-radius:8px">할 일로 등록</div>
+          </div>
+        </div>
+        <div class="section-title">다가오는 이벤트</div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="av av-dad">아</span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:bold">아빠 생신</div><div style="font-size:11px;color:var(--sub)">5월 12일 · D-68</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="av av-me">💍</span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:bold">부모님 결혼기념일</div><div style="font-size:11px;color:var(--sub)">6월 3일 · D-90</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="tab"><span class="ic">🏠</span>피드</div>
+        <div class="tab"><span class="ic">✅</span>할일</div>
+        <div class="tab active"><span class="ic">🎁</span>리마인드</div>
+        <div class="tab"><span class="ic">⚙️</span>설정</div>
+      </div>
+    </div></div>
+
+    <div class="desc-panel">
+      <span class="no-tag">6</span><h2 style="display:inline">생일/기념일 자동 리마인드</h2>
+      <div class="sub">하단 탭 3번 · 피드 하이라이트 카드와 연동</div>
+      <h4>목적</h4>
+      <ul><li>가족 이벤트를 능동적으로 검색하지 않아도 자동으로 알려주는 화면. 결제·구매 유도가 아니라 "챙길 일을 놓치지 않게" 하는 데 집중.</li></ul>
+      <h4>주요 구성요소</h4>
+      <ul>
+        <li>D-day 카운트다운 카드, 지난해 기록 회상 문구(간단 요약)</li>
+        <li>구성원별 준비 현황(완료/대기) — 서로 챙기고 있는지 알 수 있게</li>
+        <li>액션 버튼: "축하 메시지 남기기"(댓글 작성으로 이동) / "할 일로 등록"(화면5에 항목 추가)</li>
+        <li>다가오는 이벤트 목록 미리보기</li>
+      </ul>
+      <h4>인터랙션</h4>
+      <ul>
+        <li>"할 일로 등록" 탭 → 화면5에 해당 이벤트 관련 할 일이 자동 생성되어 담당자 지정 가능</li>
+        <li>피드(화면2) 상단 하이라이트 카드 탭 → 이 화면으로 진입</li>
+      </ul>
+      <p class="note">방침: 결제·구매·제휴 상품 노출은 하지 않는다. 수익화(가족 단위 이벤트 제휴 등)는 별도 확장 단계(Phase2)에서 검토하며, 이 화면은 UX 기능으로만 존재한다.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
