@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>화면 설계 — 도란도란 가족기록</title>
+<style>
+  :root{
+    --brand-primary:#E8A0A0;
+    --action-primary:#A94F5C;
+    --primary-soft:#F9E4E2;
+    --brand-secondary:#B8C9D9;
+    --secondary-strong:#526F89;
+    --secondary-soft:#EAF0F5;
+    --background:#FAF6F0;
+    --surface:#FFFFFF;
+    --text-primary:#352F30;
+    --text-secondary:#756C6D;
+    --border:#E8DFDA;
+    --green:var(--action-primary);--green2:var(--primary-soft);--ink:var(--text-primary);--sub:var(--text-secondary);--line:var(--border);--paper:var(--surface);--bg:var(--background);--pink:var(--brand-primary);--blue:var(--secondary-strong);--orange:#B87545;--purple:var(--secondary-strong)
+  }
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',sans-serif}
+  .page-head{max-width:1200px;margin:auto;padding:40px 24px 10px}.page-head h1{margin:0 0 7px;color:var(--green);font-size:25px}.page-head p{margin:0;color:var(--sub);font-size:13.5px}.stack{display:inline-block;margin-top:10px;background:var(--green);color:#fff;border-radius:5px;padding:4px 10px;font-size:12px;font-weight:700}
+  .wrap{max-width:1200px;margin:auto;padding:8px 24px 100px;display:flex;flex-direction:column}.screen-block{display:flex;gap:36px;align-items:flex-start;padding:44px 0;border-top:1px solid var(--line)}.screen-block:first-child{border-top:0}
+  .phone{width:320px;flex:none;padding:12px;border-radius:38px;background:#352F30;box-shadow:0 24px 50px rgba(53,47,48,.2)}.phone-inner{position:relative;height:660px;overflow:hidden;border-radius:26px;background:var(--background);display:flex;flex-direction:column}.notch{position:absolute;z-index:5;top:0;left:50%;transform:translateX(-50%);width:100px;height:22px;background:#352F30;border-radius:0 0 14px 14px}.status{height:36px;flex:none;padding:0 20px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:700}.top{height:49px;flex:none;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}.top .right{margin-left:auto;color:var(--green);font-size:12px}.content{flex:1;overflow-y:auto;background:var(--background);scrollbar-width:none}.content::-webkit-scrollbar{display:none}.nav{height:54px;flex:none;background:var(--surface);border-top:1px solid var(--line);display:flex;align-items:center}.nav .tab{flex:1;text-align:center;color:var(--sub);font-size:10.5px}.nav .active{color:var(--green);font-weight:700}.nav .create-tab{width:44px;height:44px;flex:none;margin:0 5px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:400;box-shadow:0 5px 12px rgba(169,79,92,.28)}
+  .card{margin:0 12px 10px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:#fff}.section-title{padding:14px 14px 7px;color:var(--sub);font-size:11.5px;font-weight:700;letter-spacing:.2px}.row{display:flex;align-items:center;gap:9px}.between{display:flex;align-items:center;justify-content:space-between;gap:10px}.muted{color:var(--sub)}.small{font-size:10.5px}.body{font-size:13px;line-height:1.5}.btn{border-radius:9px;padding:9px 11px;background:var(--green);color:#fff;text-align:center;font-size:12px;font-weight:700}.btn-light{background:var(--green2);color:var(--green)}.record-btn{display:inline-block;padding:7px 12px;border-radius:9px;background:var(--green);color:#fff;font-size:11px;font-weight:700;box-shadow:0 3px 8px rgba(26,111,92,.22)}.chip-row{display:flex;gap:7px;overflow:hidden;padding:9px 13px}.chip{flex:none;padding:5px 11px;border:1px solid var(--line);border-radius:16px;background:#fff;color:var(--sub);font-size:11px}.chip.on{border-color:var(--green);background:var(--green);color:#fff;font-weight:700}.av{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;color:#fff;font-size:0;font-weight:700}.av::after{font-size:18px}.av.mom::after{content:'👩‍🦰'}.av.dad::after{content:'👨‍🦳'}.av.me::after{content:'👩'}.av.kid::after{content:'👧'}.mom{background:#fde9f0}.dad{background:#e9effc}.me{background:#e4f3ed}.kid{background:#eee8fb}
+  .hero{padding:14px 14px 8px}.hero h3{margin:0 0 4px;font-size:15px}.hero p{margin:0;color:var(--sub);font-size:11.5px}.event{display:grid;grid-template-columns:43px 1fr;gap:10px;align-items:center}.date{height:43px;border-radius:10px;background:var(--green2);color:var(--green);display:grid;place-items:center;font-size:11px}.date b{display:block;font-size:15px}.task{display:grid;grid-template-columns:18px 1fr auto;gap:9px;align-items:center}.check{width:18px;height:18px;border:2px solid var(--line);border-radius:5px}.check.done{border-color:var(--green);background:var(--green);color:#fff;text-align:center;font-size:11px;line-height:14px}.photo{height:145px;border-radius:10px;background-image:url('assets/eunseo-family-feed.png');background-repeat:no-repeat;background-size:200% 200%;background-color:var(--secondary-soft)}.snap-gimbap{background-position:0 0}.snap-garden{background-position:100% 0}.snap-rain{background-position:0 100%}.snap-cafe{background-position:100% 100%}.meta{display:flex;align-items:center;gap:7px;color:var(--sub);font-size:10.5px;margin-bottom:8px}.input{border:1px solid var(--line);border-radius:9px;background:#fff;padding:10px 11px;font-size:12px;color:var(--sub)}.cal-head,.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}.cal-head{padding:8px 12px 5px;color:var(--sub);font-size:10px}.cal{padding:0 12px}.day{min-height:41px;border-radius:8px;background:#fff;border:1px solid #edf0ee;padding:5px 2px;font-size:10px}.day.mark{background:var(--green2);color:var(--green);font-weight:700}.day span{display:block;margin-top:4px;font-size:8px}.bar{height:7px;border-radius:5px;background:var(--green2);overflow:hidden}.bar span{display:block;height:100%;background:var(--green)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:0 12px 12px}.tile{height:86px;border-radius:8px;background:linear-gradient(145deg,#d9e8e2,#eef3f1);display:flex;align-items:center;justify-content:center;color:var(--green);font-size:20px}.tile.snap-gimbap,.tile.snap-garden,.tile.snap-rain,.tile.snap-cafe{background-image:url('assets/eunseo-family-feed.png');background-repeat:no-repeat;background-size:200% 200%;font-size:0}.tile.snap-gimbap{background-position:0 0}.tile.snap-garden{background-position:100% 0}.tile.snap-rain{background-position:0 100%}.tile.snap-cafe{background-position:100% 100%}.tile.text{padding:8px;background:#f2edf9;color:var(--purple);font-size:9px;line-height:1.4}.limit{padding:14px 13px;margin:0 12px 12px;border-radius:11px;background:#fff7eb;border:1px solid #ecd9bc}.book{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:center}.cover{height:96px;background:#e7ded1;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:25px;box-shadow:3px 3px 0 #cfc2b0}.cover.album-cover{background:url('assets/eunseo-photobook-preview.png') 10% center/cover no-repeat}.badge{display:inline-block;border-radius:5px;background:var(--green2);color:var(--green);padding:2px 7px;font-size:9.5px;font-weight:700}.photobook-preview{height:190px;border-radius:10px;background:url('assets/eunseo-photobook-preview.png') center/cover no-repeat}.flow-section-heading{margin:48px 0 0;padding:18px 22px;border-radius:14px;background:var(--secondary-soft);color:var(--secondary-strong);font-size:19px}.flow-section-heading:first-child{margin-top:20px}
+  .desc{flex:1;min-width:340px;padding:26px 28px;border:1px solid var(--line);border-radius:14px;background:#fff}.num{display:inline-flex;width:26px;height:26px;margin-right:8px;border-radius:7px;background:var(--green);color:#fff;align-items:center;justify-content:center;font-size:13px;font-weight:700}.desc h2{display:inline;margin:0;font-size:17px}.desc .sub{margin:5px 0 16px;color:var(--green);font-size:12.5px;font-weight:700}.desc h4{margin:18px 0 6px;color:var(--green);font-size:12px;text-transform:uppercase;letter-spacing:.4px}.desc h4:first-of-type{margin-top:0}.desc ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.7}.desc li{margin:3px 0}.note{margin-top:16px;padding:10px 12px;border-radius:8px;background:var(--green2);color:var(--sub);font-size:12.5px;line-height:1.55}
+  .toggle{width:38px;height:22px;padding:2px;border-radius:12px;background:var(--border);display:flex;justify-content:flex-start}.toggle.on{justify-content:flex-end;background:var(--action-primary)}.toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px rgba(53,47,48,.22)}
+  @media(max-width:760px){.screen-block{flex-direction:column;align-items:center}.phone{width:300px}.desc{min-width:0;width:100%}}
+</style>
+</head>
+<body>
+<header class="page-head"><h1>화면 설계 — 도란도란 가족기록</h1><p>매일 다양한 질문으로 가족의 이야기를 모으고, 일정·할 일·추억을 함께 관리하는 비공개 가족 서비스</p><span class="stack">핵심 기능 · 초대/시작 · 설정/관리 · 섹션별 화면번호 · 총 14화면</span></header>
+<main class="wrap">
+
+<!-- START -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">도란도란 <span class="right">설정</span></div><div class="content">
+    <div class="hero"><h3>어느 가족방에 들어갈까요?</h3><p>참여 중인 가족방을 선택하면 해당 방의 오늘 화면으로 이동해요.</p></div>
+    <div class="section-title">참여 중인 가족방 · 3개</div><div class="card row" style="border-color:var(--brand-primary)"><span class="av me">나</span><div><b class="body">은서네</b><div class="small muted">4명 · 할 일 2개 · 일정 2개</div></div><span class="btn-light" style="margin-left:auto;padding:7px 9px;border-radius:8px;font-size:11px;font-weight:700">입장</span></div><div class="card row"><span class="av mom">친</span><div><b class="body">거제도친척방</b><div class="small muted">10명 · 할 일 4개 · 일정 1개</div></div><span class="btn-light" style="margin-left:auto;padding:7px 9px;border-radius:8px;font-size:11px;font-weight:700">입장</span></div><div class="card row"><span class="av kid">팬</span><div><b class="body">하윤이 덕질방</b><div class="small muted">5명 · 할 일 1개 · 일정 3개</div></div><span class="btn-light" style="margin-left:auto;padding:7px 9px;border-radius:8px;font-size:11px;font-weight:700">입장</span></div>
+    <div class="section-title">새 가족방</div><div class="card"><div class="btn">＋ 새 가족방 만들기</div><p class="small muted">무료로 최대 3개까지 만들 수 있어요.</p></div>
+    <div class="card"><div class="between body"><span>초대 링크로 참여하기</span><span style="color:var(--green)">링크 입력 ›</span></div></div>
+  </div></div></div>
+  <div class="desc"><span class="num">S</span><h2>가족방 선택 / 앱 첫 화면</h2><div class="sub">앱 구동 직후 · 로그인 완료 사용자의 기본 진입점</div><h4>목적</h4><ul><li>앱에 들어오자마자 참여 중인 가족방을 확인하고 원하는 방을 명시적으로 선택해 입장한다.</li></ul><h4>주요 구성요소</h4><ul><li>참여 중인 가족방 목록</li><li>방별 새 기록·할 일·일정 요약</li><li>가족방별 입장 버튼</li><li>새 가족방 생성과 초대 링크 참여</li></ul><h4>인터랙션</h4><ul><li>입장 탭 시 선택한 가족방을 현재 컨텍스트로 저장하고 화면3 통합 홈으로 이동한다.</li><li>새 가족방 만들기 탭 시 화면1 가족방 생성으로 이동한다.</li><li>참여 중인 방이 하나뿐이어도 첫 화면에서 방을 확인한 뒤 입장한다.</li><li>참여 중인 방이 없으면 빈 상태와 가족방 만들기·초대 링크 참여 버튼을 표시한다.</li></ul><p class="note">마지막으로 사용한 방에 자동 입장시키지 않는다. 다른 방 입장은 앱을 다시 열어 첫 화면에서 선택한다.</p></div>
+</section>
+
+<!-- 1 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">가족방 만들기</div><div class="content">
+    <div class="hero"><h3>우리 가족만의 공간을 만들어요</h3><p>사진, 글, 일정과 할 일을 안전하게 나눌 수 있어요.</p></div>
+    <div class="section-title">가족방 이름 · 필수</div><div class="card"><div class="input">은서네</div><p class="small muted">2~20자 · 생성 후 방장이 변경할 수 있어요.</p></div>
+    <div class="section-title">내 호칭 · 필수</div><div class="card"><div class="input">은서 · 딸</div><p class="small muted">이 가족방에서 다른 구성원에게 표시되는 이름이에요.</p></div>
+    <div class="section-title">생성 후 적용되는 권한</div><div class="card body"><p>• 생성자가 방장이 됩니다.</p><p>• 초대와 방 설정은 생성 완료 후 가능합니다.</p><p>• 방장만 유료 확장과 방 삭제를 할 수 있습니다.</p></div>
+    <div class="limit"><b class="body">무료 이용 범위</b><div class="small muted" style="margin-top:4px">가족방 3개 · 방마다 10명까지 무료 · 기록 기능 제한 없음</div></div>
+  </div><div style="padding:12px 14px;background:#fff;border-top:1px solid var(--line)"><div class="btn">가족방 생성하기</div></div></div></div>
+  <div class="desc"><span class="num">1</span><h2>가족방 생성</h2><div class="sub">온보딩 1단계 · 초대보다 반드시 먼저 수행</div><h4>목적</h4><ul><li>가족방의 최소 정보만 입력해 서버에 방을 먼저 생성하고 생성자를 방장으로 확정한다.</li></ul><h4>생성 규칙</h4><ul><li>가족방 이름과 생성자의 호칭은 필수 입력이다.</li><li>생성 버튼을 누르면 방 ID와 방장 권한이 생성되고 성공 응답 후 화면2로 이동한다.</li><li>생성 전에는 초대 링크를 만들거나 가족을 초대할 수 없다.</li><li>무료 방 3개를 이미 보유했다면 생성 직전에 방 추가권 구매를 안내한다.</li></ul><h4>오류 처리</h4><ul><li>네트워크 오류 시 방이 생성되지 않았음을 명확히 표시하고 중복 생성을 막는다.</li><li>생성 성공 후 초대 화면을 닫더라도 가족방은 유지되며 방 관리에서 다시 초대할 수 있다.</li></ul><p class="note">생성과 초대를 하나의 저장 동작으로 묶지 않는다. 방 생성 성공을 확정한 뒤에만 초대 링크 발급 API를 호출한다.</p></div>
+</section>
+
+<!-- 2 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">가족 초대 <span class="right">나중에</span></div><div class="content">
+    <div class="hero"><span class="badge">생성 완료</span><h3 style="margin-top:8px">은서네가 만들어졌어요</h3><p>엄마, 아빠, 오빠에게 초대 링크를 보내보세요.</p></div>
+    <div class="card"><div class="btn">카카오톡으로 초대 링크 보내기</div><div class="btn-light" style="padding:9px;text-align:center;border-radius:8px;font-size:11.5px;font-weight:700;margin-top:7px">초대 링크 복사</div><p class="small muted">링크 유효기간 7일 · 재발급 시 이전 링크 무효화</p></div>
+    <div class="section-title">참여 현황 · 참여 4/10명</div><div class="card"><div class="row"><span class="av me">나</span><div><b class="body">은서 · 딸</b><div class="small muted">방장 · 오늘 오후 1:42 참여</div></div><span class="badge" style="margin-left:auto">참여</span></div><div class="row" style="margin-top:10px"><span class="av mom">엄</span><div><b class="body">엄마</b><div class="small muted">오늘 오후 2:13 참여</div></div><span class="badge" style="margin-left:auto">참여</span></div><div class="row" style="margin-top:10px"><span class="av dad">아</span><div><b class="body">아빠</b><div class="small muted">오늘 오후 2:18 참여</div></div><span class="badge" style="margin-left:auto">참여</span></div><div class="row" style="margin-top:10px"><span class="av dad">오</span><div><b class="body">오빠</b><div class="small muted">오늘 오후 3:05 참여</div></div><span class="badge" style="margin-left:auto">참여</span></div></div>
+    <div class="card"><div class="between"><span class="body">초대 링크 관리</span><span class="small" style="color:var(--green)">재발급 ›</span></div></div>
+  </div><div style="padding:12px 14px;background:#fff;border-top:1px solid var(--line)"><div class="btn">초대 마치고 홈으로</div></div></div></div>
+  <div class="desc"><span class="num">2</span><h2>가족 초대</h2><div class="sub">온보딩 2단계 · 생성 성공 후에만 진입</div><h4>목적</h4><ul><li>이미 생성된 가족방의 초대 링크를 공유하고 참여 상태를 확인한다.</li></ul><h4>초대 및 참여</h4><ul><li>카카오톡 공유 또는 링크 복사를 제공하며 링크는 7일 동안 유효하다.</li><li>초대받은 사용자는 방 이름·방장·현재 인원을 확인한 뒤 참여를 확정한다.</li><li>대기·링크 열람·참여 상태와 발송 시각을 방장에게 표시한다.</li><li>중복 참여 계정, 만료·취소 링크, 10명 한도 도달 상태를 각각 구분해 안내한다.</li></ul><h4>인터랙션</h4><ul><li>나중에 버튼으로 바로 홈에 진입할 수 있고 방 관리 화면에서 초대를 재개할 수 있다.</li><li>11번째 구성원 초대 시 방장에게 해당 방의 인원 확장권을 안내한다.</li></ul><p class="note">초대 화면을 나가거나 링크 공유를 취소해도 이미 생성된 가족방은 삭제되지 않는다.</p></div>
+</section>
+
+<!-- 3 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">은서네 <span class="right">설정</span></div><div class="content">
+    <div class="hero"><h3>7월 26일 일요일</h3><p>우리 가족의 오늘을 한곳에서 확인해요.</p></div>
+    <div class="section-title between"><span>오늘의 가족 기록</span><span style="color:var(--green)">피드 보기 ›</span></div><div class="grid"><div class="tile snap-gimbap"></div><div class="tile snap-garden"></div><div class="tile snap-rain"></div></div>
+    <div class="section-title between"><span>함께 할 일 · 1/3 완료</span><span style="color:var(--green)">전체 ›</span></div><div class="card task"><span class="check done">✓</span><span class="body">거제도 숙소 예약 확인서 저장</span><span class="small muted">은서</span></div><div class="card task"><span class="check"></span><span class="body">엄마 생일 케이크 예약하기</span><span class="small muted">아빠</span></div>
+    <div class="section-title between"><span>다가오는 일정</span><span style="color:var(--green)">전체 ›</span></div><div class="card event"><div class="date"><b>28</b>화</div><div><b class="body">엄마 생일 🎂</b><div class="small muted">프로필에서 자동 등록 · 수정 불가</div></div></div><div class="card event"><div class="date"><b>02</b>일</div><div><b class="body">가족 저녁 식사</b><div class="small muted">오후 6:30 · 동네 장어집</div></div></div>
+  </div><div class="nav"><div class="tab active">오늘</div><div class="tab">일정</div><div class="create-tab">＋</div><div class="tab">할 일</div><div class="tab">추억</div></div></div></div>
+  <div class="desc"><span class="num">3</span><h2>통합 홈</h2><div class="sub">코어 화면 · 하단 탭 ‘오늘’</div><h4>목적</h4><ul><li>가족의 기록, 해야 할 일, 가까운 일정을 오늘 기준으로 요약한다.</li></ul><h4>주요 구성요소</h4><ul><li>현재 입장한 가족방 이름과 설정</li><li>오늘의 가족 기록 미리보기와 ‘피드 보기’</li><li>공동 할 일 진행 현황</li><li>다가오는 생일·기념일·병원 일정</li></ul><h4>인터랙션</h4><ul><li>피드 보기 탭 시 화면4 오늘의 가족 피드로 이동한다.</li><li>가족 기록을 누르면 화면6 게시물 상세가 열린다.</li><li>하단 중앙 + 버튼을 누르면 화면5 오늘 기록하기가 열린다.</li><li>설정 탭 시 화면12로 이동하며 가족방 전환 메뉴는 표시하지 않는다.</li></ul><p class="note">홈 영역의 버튼은 작성 기능을 겸하지 않는다.</p></div>
+</section>
+
+<!-- 4 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">← 오늘의 가족 피드 <span class="right">7월 26일</span></div><div class="content">
+    <div class="limit" style="background:#f6f0fb;border-color:#dfd2ed"><span class="badge" style="background:#ebe0f5;color:var(--purple)">오늘의 질문</span><p class="body" style="margin:8px 0 4px"><b>오늘 하루 중 제일 힘들었던 순간은 언제였나요?</b></p><div class="small muted">매일 새로운 질문이 가족에게 푸시됩니다.</div><div class="btn" style="margin-top:10px">이 질문으로 기록하기</div></div>
+    <div class="section-title">오늘 올라온 기록 · 4개</div><div class="card"><div class="meta"><span class="av mom">엄</span><b>엄마</b><span style="margin-left:auto">오전 11:48</span></div><div class="photo snap-gimbap"></div><p class="body">오빠 야근이라길래 저녁에 먹으라고 김밥 싸뒀어. 은서 것도 냉장고 둘째 칸에 넣어놨으니 퇴근하고 가져가.</p><div class="small muted">❤️ 3 · 댓글 2</div></div><div class="card"><div class="meta"><span class="av dad">아</span><b>아빠</b><span style="margin-left:auto">오후 3:42</span></div><div class="photo snap-garden"></div><p class="body">베란다 토마토가 드디어 빨갛게 익기 시작했다. 주말 저녁에 같이 먹을 만큼은 되겠네.</p><div class="small muted">🍅 3 · 댓글 1</div></div><div class="card"><div class="meta"><span class="av dad">오</span><b>오빠</b><span style="margin-left:auto">오후 7:16</span></div><div class="photo snap-rain"></div><p class="body">퇴근 버스가 한 시간째 꼼짝을 안 한다. 엄마 김밥 생각하면서 버티는 중.</p><div class="small muted">☔ 2 · 댓글 2</div></div><div class="card"><div class="meta"><span class="av me">나</span><b>은서</b><span style="margin-left:auto">오후 8:04</span></div><div class="photo snap-cafe"></div><p class="body">퇴근 후 카페에서 거제도 여행 일정을 정리했어. 내일 단톡방에 숙소 후보 세 곳 올릴게.</p><div class="small muted">👍 3 · 댓글 1</div></div>
+  </div><div class="nav"><div class="tab active">오늘</div><div class="tab">일정</div><div class="create-tab">＋</div><div class="tab">할 일</div><div class="tab">추억</div></div></div></div>
+  <div class="desc"><span class="num">4</span><h2>오늘의 가족 피드</h2><div class="sub">홈의 ‘피드 보기’로 진입 · 오늘 게시물 전체</div><h4>목적</h4><ul><li>오늘 가족들이 올린 모든 글·사진·영상을 누락 없이 시간순으로 확인한다.</li></ul><h4>주요 구성요소</h4><ul><li>오늘 날짜와 전체 게시물 수</li><li>오늘의 질문</li><li>작성자·시각·본문·미디어·반응이 포함된 피드</li><li>질문으로 기록하기와 하단 중앙 + 버튼</li></ul><h4>매일 질문 푸시</h4><ul><li>매일 가족 구성원에게 하나의 질문을 푸시한다.</li><li>예: “오늘 하루 중 제일 힘들었던 순간은 언제였나요?”, “오늘 날씨가 마음에 드시나요?”, “오늘 가장 고마웠던 사람은 누구인가요?”</li><li>질문은 감정에 한정하지 않고 일상·날씨·취향·관계·회상·가벼운 선택형 등 다양한 주제를 반복되지 않게 순환한다.</li><li>알림 탭 시 화면5 오늘 기록하기로 이동하며 질문을 작성 화면 상단에 유지한다.</li></ul><p class="note">질문에 답하지 않아도 자유 기록을 올릴 수 있고, 미작성자에게 반복 독촉하거나 참여율을 공개하지 않는다.</p></div>
+</section>
+
+<!-- 5 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">✕ 오늘 기록하기 <span class="right">게시</span></div><div class="content">
+    <div class="hero"><span class="badge">오늘의 질문</span><h3 style="margin-top:8px">오늘 가장 좋았던 순간은?</h3><p>질문에 답하거나 자유롭게 가족의 순간을 적어주세요.</p></div>
+    <div class="card"><div class="meta"><span class="av me">나</span><b>은서</b><span style="margin-left:auto">은서네</span></div><div class="input" style="height:170px">가족에게 남길 이야기를 적어주세요</div></div>
+    <div class="section-title between"><span>첨부한 사진·영상</span><span>0/10개</span></div><div class="grid"><div class="tile">＋</div></div><div class="card small muted">＋ 영역을 눌러 사진과 영상을 함께 선택할 수 있어요. 한 게시물에 합쳐서 최대 10개까지 첨부할 수 있습니다.</div>
+  </div></div></div>
+  <div class="desc"><span class="num">5</span><h2>오늘 기록하기</h2><div class="sub">하단 중앙 + 버튼 또는 질문 푸시로 진입</div><h4>목적</h4><ul><li>오늘의 질문에 답하거나 글·사진·영상으로 가족의 순간을 자유롭게 남긴다.</li></ul><h4>주요 구성요소</h4><ul><li>오늘의 질문과 자유 글 입력</li><li>하단 사진·영상 통합 첨부 영역</li><li>첨부 수 0/10 표시</li><li>현재 게시 대상 가족방 표시</li></ul><h4>인터랙션</h4><ul><li>하단 + 영역에서 사진과 영상을 함께 선택하며 합산 최대 10개까지만 허용한다.</li><li>10개를 넘으면 초과 항목을 추가하지 않고 선택 해제 안내를 표시한다.</li><li>첨부 순서를 바꾸거나 개별 삭제할 수 있다.</li><li>게시 후 오늘 피드와 추억에 즉시 반영된다.</li></ul><p class="note">상단의 사진 추가·영상 추가 버튼은 두지 않는다. 음성, 일정·할 일 연결, 공개 범위 설정도 제공하지 않는다.</p></div>
+</section>
+
+<!-- 6 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">← 게시물 <span class="right">•••</span></div><div class="content">
+    <div style="padding:16px 14px 10px"><div class="meta"><span class="av mom">엄</span><div><b class="body">엄마</b><div class="small muted">7월 26일 오전 11:48</div></div></div><div class="photo snap-gimbap" style="height:260px"></div><p class="body" style="font-size:13.5px">오빠 야근이라길래 저녁에 먹으라고 김밥 싸뒀어. 은서 것도 냉장고 둘째 칸에 넣어놨으니 퇴근하고 가져가.</p><div class="row small muted"><span>❤️ 3</span><span>댓글 2</span><span style="margin-left:auto">가족 4명 확인</span></div></div>
+    <div class="section-title">반응</div><div class="chip-row"><span class="chip on">❤️ 4</span><span class="chip">😊 2</span><span class="chip">＋ 반응</span></div>
+    <div class="section-title">댓글 2개</div><div class="card"><div class="meta"><span class="av me">나</span><b>은서</b><span style="margin-left:auto">오후 12:02</span></div><div class="body">엄마 고마워! 퇴근하고 7시 반쯤 들를게. 내 건 두 줄이면 충분해 😊</div></div><div class="card"><div class="meta"><span class="av dad">오</span><b>오빠</b><span style="margin-left:auto">오후 12:18</span></div><div class="body">오늘 9시는 돼야 끝날 것 같아. 내 건 냉장고에 넣어줘!</div></div>
+  </div><div style="padding:10px 12px;background:#fff;border-top:1px solid var(--line)"><div class="input">댓글을 입력하세요</div></div></div></div>
+  <div class="desc"><span class="num">6</span><h2>가족 게시물 상세</h2><div class="sub">오늘 피드 또는 추억의 게시물 탭으로 진입</div><h4>목적</h4><ul><li>다른 가족이 올린 글과 원본 사진·영상을 크게 보고, 반응과 댓글로 대화를 이어간다.</li></ul><h4>주요 구성요소</h4><ul><li>작성자, 게시 시각, 원본 글</li><li>사진·영상 전체 화면 보기와 여러 장 넘기기</li><li>이모지 반응 수, 댓글, 확인한 가족 수</li><li>하단 댓글 입력창</li></ul><h4>인터랙션</h4><ul><li>사진 탭 시 확대 보기, 영상 탭 시 인라인 재생한다.</li><li>반응과 댓글은 가족방 전체에 즉시 반영된다.</li><li>본인 게시물은 수정·삭제할 수 있다.</li></ul><p class="note">가족방 내부 콘텐츠이므로 외부 공유 버튼은 기본 제공하지 않는다.</p></div>
+</section>
+
+<!-- 7 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">가족 일정</div><div class="content">
+    <div class="between" style="padding:14px"><b>2026년 7월</b><span class="small" style="color:var(--green)">이번 달</span></div><div class="cal-head"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div><div class="cal"><div class="day">19</div><div class="day">20</div><div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day mark">26<span>오늘</span></div><div class="day">27</div><div class="day mark">28<span>생일</span></div><div class="day">29</div><div class="day">30</div><div class="day">31</div><div class="day mark">1<span>병원</span></div></div>
+    <div class="section-title">다가오는 일정</div><div class="card event"><div class="date"><b>28</b>7월</div><div><b class="body">엄마 생일 🔒</b><div class="small muted">프로필 자동 등록 · 매년 반복 · 1일 전 알림</div></div></div><div class="card event"><div class="date"><b>02</b>8월</div><div><b class="body">은서네 가족 저녁 식사</b><div class="small muted">오후 6:30~8:30 · 가족 4명</div></div></div>
+    <div class="section-title">새 일정</div><div class="card"><div class="input">은서네 가족 저녁 식사</div><div class="between body" style="padding:8px 2px"><span>하루 종일</span><span class="toggle"></span></div><div class="between body" style="padding:9px 2px;border-top:1px solid var(--border)"><b>시작</b><span>2026. 8. 2. 일&nbsp;&nbsp;오후 6:30 ›</span></div><div class="between body" style="padding:9px 2px;border-top:1px solid var(--border)"><b>종료</b><span>2026. 8. 2. 일&nbsp;&nbsp;오후 8:30 ›</span></div><div class="input" style="margin-top:8px">장소 · 동네 장어집</div><div class="input" style="margin-top:8px">메모 · 창가 자리 예약, 아빠 차로 함께 이동</div><div class="row" style="margin-top:8px"><div class="input" style="flex:1">반복 · 안 함</div><div class="input" style="flex:1">알림 · 1일 전, 1시간 전</div></div><div class="input" style="margin-top:8px">함께할 가족 · 은서, 엄마, 아빠, 오빠</div><div class="btn" style="margin-top:9px">가족 일정에 추가</div></div>
+  </div><div class="nav"><div class="tab">오늘</div><div class="tab active">일정</div><div class="create-tab">＋</div><div class="tab">할 일</div><div class="tab">추억</div></div></div></div>
+  <div class="desc"><span class="num">7</span><h2>가족 일정</h2><div class="sub">하단 탭 ‘일정’ · iOS 캘린더형 입력 흐름</div><h4>목적</h4><ul><li>가족 전체가 생일·모임·병원·여행 일정을 같은 달력에서 확인하고 놓치지 않도록 알림받는다.</li></ul><h4>입력 순서</h4><ul><li>일정명 → 하루 종일 → 시작 → 종료 → 장소 → 메모 → 반복 → 알림 → 참여 가족</li><li>일반 일정에는 음력 선택을 제공하지 않는다.</li><li>‘하루 종일’이 꺼져 있으면 시작과 종료에 각각 일자·시·분 선택기를 표시한다.</li><li>‘하루 종일’이 켜지면 시간 선택기를 숨기고 시작일·종료일만 표시한다.</li></ul><h4>인터랙션</h4><ul><li>시작 또는 종료 행을 누르면 iOS 캘린더처럼 인라인 날짜·시간 선택기가 펼쳐진다.</li><li>종료 일시는 시작 일시보다 빠를 수 없으며 여러 날 일정도 지원한다.</li><li>메모에는 준비물·예약 정보·이동 방법 등 가족이 함께 확인할 세부사항을 입력한다.</li><li>장소는 지도 앱으로 열고 참여 가족에게 추가·변경·취소 푸시를 보낸다.</li><li>설정에 저장한 생일은 매년 자동 생성하며 🔒로 표시한다. 일정 화면에서는 수정·삭제할 수 없다.</li></ul><p class="note">생일의 양력·음력과 날짜 변경은 사용자 설정의 생년월일에서만 처리한다.</p></div>
+</section>
+
+<!-- 8 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">함께 할 일</div><div class="content">
+    <div class="hero"><div class="between"><h3>이번 주 진행률</h3><b class="small">1/3 완료</b></div><div class="bar" style="margin-top:9px"><span style="width:33%"></span></div></div><div class="chip-row"><span class="chip on">이번 주</span><span class="chip">내 담당</span><span class="chip">완료</span></div>
+    <div class="section-title">7월 27일까지</div><div class="card task"><span class="check"></span><span><b class="body">엄마 생신 케이크 전화 예약</b><span class="small muted" style="display:block">담당 아빠 · 동네 빵집 딸기 생크림 2호</span></span><span class="badge">내일</span></div>
+    <div class="section-title">7월 30일까지</div><div class="card task"><span class="check"></span><span><b class="body">거제도 숙소 후보 3곳 공유</b><span class="small muted" style="display:block">담당 은서 · 메모: 주차 가능, 방 2개 이상</span></span><span class="badge">D-4</span></div><div class="card task" style="opacity:.55"><span class="check done">✓</span><span><b class="body" style="text-decoration:line-through">아빠 자동차 보험 갱신일 확인</b><span class="small muted" style="display:block">오빠 · 오늘 오전 9:20 완료</span></span><span>✓</span></div>
+    <div class="section-title">새 할 일</div><div class="card"><div class="input">거제도 숙소 후보 3곳 공유</div><div class="row" style="margin-top:8px"><div class="input" style="flex:1">담당자 · 은서</div><div class="input" style="flex:1">마감일 · 7월 30일</div></div><div class="input" style="margin-top:8px">메모 · 주차 가능, 방 2개 이상, 취소 수수료 확인</div><div class="btn" style="margin-top:9px">가족 할 일에 추가</div></div>
+  </div><div class="nav"><div class="tab">오늘</div><div class="tab">일정</div><div class="create-tab">＋</div><div class="tab active">할 일</div><div class="tab">추억</div></div></div></div>
+  <div class="desc"><span class="num">8</span><h2>공동 할 일</h2><div class="sub">하단 탭 ‘할 일’</div><h4>목적</h4><ul><li>가족이 함께 챙겨야 할 일을 담당자와 마감일이 있는 실행 항목으로 관리한다.</li></ul><h4>주요 구성요소</h4><ul><li>이번 주 완료율과 기간·담당 필터</li><li>할 일명, 담당자, 마감일, 메모, 완료자</li></ul><h4>인터랙션</h4><ul><li>누구나 화면 내부 ‘새 할 일’ 양식에서 항목을 추가하고 담당자를 지정할 수 있다.</li><li>메모에는 준비물, 조건, 연락처처럼 실행에 필요한 상세 내용을 남긴다.</li><li>하단 중앙 + 버튼은 화면7 오늘 기록하기로 이동한다.</li><li>완료 체크 시 모든 가족 화면에 실시간 반영된다.</li></ul><p class="note">우측 상단 ‘+ 추가’는 두지 않는다. 할 일은 무료 기능이다.</p></div>
+</section>
+
+<!-- 9 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">은서네</div><div class="content">
+    <div class="hero"><div class="between"><h3>추억</h3><b class="small" style="color:var(--green)">2026년 7월 ▾</b></div><p>기록 10개 · 사진 7장 · 글 10개</p></div><div class="chip-row"><span class="chip on">글+사진</span><span class="chip">사진만</span><span class="chip">영상</span></div>
+    <div class="section-title">7월 26일 일요일</div><div class="card"><div class="meta"><span class="av mom">엄</span><b>엄마</b><span style="margin-left:auto">오전 11:48</span></div><div class="photo snap-gimbap"></div><p class="body">오빠 야근이라길래 김밥 싸뒀어. 은서 것도 냉장고 둘째 칸에 있어.</p><div class="small muted">❤️ 3 · 댓글 2</div></div>
+    <div class="card"><div class="meta"><span class="av dad">아</span><b>아빠</b><span style="margin-left:auto">오후 3:42</span></div><div class="photo snap-garden"></div><p class="body">토마토가 드디어 익기 시작했다. 주말 저녁에 같이 먹자.</p><div class="small muted">🍅 3 · 댓글 1</div></div>
+    <div class="card"><div class="meta"><span class="av dad">오</span><b>오빠</b><span style="margin-left:auto">오후 7:16</span></div><div class="photo snap-rain"></div><p class="body">비 오는 퇴근길. 버스가 한 시간째 꼼짝을 안 한다.</p><div class="small muted">☔ 2 · 댓글 2</div></div>
+    <div class="card"><div class="meta"><span class="av me">나</span><b>은서</b><span style="margin-left:auto">오후 8:04</span></div><div class="photo snap-cafe"></div><p class="body">카페에서 거제도 여행 숙소 후보를 정리했다.</p><div class="small muted">👍 3 · 댓글 1</div></div>
+    <div class="section-title">7월 23일 목요일</div><div class="card body"><b>엄마</b><p>아빠랑 시장에서 복숭아 한 상자 사 왔어. 주말에 가져가.</p><span class="small muted">❤️ 2 · 댓글 3</span></div>
+    <div class="card body"><b>아빠</b><p>자동차 정기검사 받고 왔다. 다음 검사는 2028년 7월.</p><span class="small muted">👍 2</span></div>
+    <div class="section-title">7월 19일 일요일</div><div class="card body"><b>은서</b><p>오빠랑 엄마 생일 케이크 후보 세 개 골랐어. 아빠가 마지막으로 골라줘.</p><span class="small muted">🎂 3 · 댓글 4</span></div>
+    <div class="card body"><b>오빠</b><p>거제도 갈 때 운전은 내가 먼저 할게. 휴게소에서 아빠랑 교대하자.</p><span class="small muted">🚗 3 · 댓글 1</span></div>
+    <div class="section-title">7월 12일 일요일</div><div class="card body"><b>엄마</b><p>오랜만에 네 방 정리했더니 고등학교 졸업사진이 나왔네.</p><span class="small muted">😊 4 · 댓글 5</span></div>
+    <div class="card body"><b>아빠</b><p>저녁 산책하다 무지개를 봤다. 사진보다 실제가 더 선명했어.</p><span class="small muted">🌈 3 · 댓글 2</span></div>
+    <div class="card between"><div><b class="body">7월 기록을 종이로 남길까요?</b><div class="small muted">포토북은 원할 때만 별도 구매</div></div><span class="btn-light" style="padding:7px 9px;border-radius:8px;font-size:11px;font-weight:700">포토북 ›</span></div>
+  </div><div class="nav"><div class="tab">오늘</div><div class="tab">일정</div><div class="create-tab">＋</div><div class="tab">할 일</div><div class="tab active">추억</div></div></div></div>
+  <div class="desc"><span class="num">9</span><h2>추억 모아보기</h2><div class="sub">하단 탭 ‘추억’ · 기록 아카이브</div><h4>목적</h4><ul><li>가족들이 올린 글·사진·영상을 날짜와 작성자 맥락 그대로 되돌아본다.</li></ul><h4>주요 구성요소</h4><ul><li>월별 기록 수와 월 이동</li><li>글+사진 / 사진만 / 영상 보기 전환</li><li>날짜별 가족 기록, 반응, 댓글</li></ul><h4>인터랙션</h4><ul><li>기록 탭 시 화면6에서 원본과 댓글을 확인한다.</li><li>하단 중앙 + 버튼은 화면5 오늘 기록하기로 이동한다.</li><li>월 하단의 포토북 안내로 화면14에 이동한다.</li></ul><p class="note">검색·찾기 기능은 제공하지 않는다. 월과 보기 방식만으로 단순하게 탐색한다.</p></div>
+</section>
+
+<!-- 11 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">← 은서네 관리</div><div class="content">
+    <div class="section-title">방 정보</div><div class="card"><div class="small muted">가족방 이름</div><div class="input" style="margin-top:6px">은서네</div><div class="btn-light" style="padding:8px;text-align:center;border-radius:8px;font-size:11.5px;font-weight:700;margin-top:8px">이름 변경 저장</div></div>
+    <div class="section-title between"><span>구성원 · 4/10명</span><span style="color:var(--green)">＋ 초대</span></div><div class="card"><div class="row"><span class="av me">나</span><div><b class="body">은서 · 딸</b><div class="small muted">방장</div></div><span class="badge" style="margin-left:auto">관리자</span></div><div class="row" style="margin-top:12px"><span class="av mom">엄</span><div><b class="body">엄마</b><div class="small muted">2026.07.20 참여</div></div><span class="small" style="margin-left:auto;color:var(--orange)">내보내기</span></div><div class="row" style="margin-top:12px"><span class="av dad">아</span><div><b class="body">아빠</b><div class="small muted">2026.07.20 참여</div></div><span class="small" style="margin-left:auto;color:var(--orange)">내보내기</span></div><div class="row" style="margin-top:12px"><span class="av dad">오</span><div><b class="body">오빠</b><div class="small muted">2026.07.21 참여</div></div><span class="small" style="margin-left:auto;color:var(--orange)">내보내기</span></div></div>
+    <div class="section-title">초대 링크</div><div class="card"><div class="between body"><span>7일 후 만료</span><span style="color:var(--green)">재발급</span></div><div class="small muted" style="margin-top:6px">재발급하면 기존 링크는 즉시 무효화됩니다.</div></div>
+    <div class="section-title">데이터 및 방 관리</div><div class="card"><div class="between body"><span>가족 기록 내보내기</span><span style="color:var(--green)">요청 ›</span></div></div><div class="card" style="border-color:#e9c7c7"><div class="between body"><span style="color:#b64242">가족방 삭제</span><span style="color:#b64242">삭제 ›</span></div><p class="small muted">삭제하면 모든 구성원의 접근이 종료됩니다.</p></div>
+  </div></div></div>
+  <div class="desc"><span class="num">11</span><h2>가족방 상세 관리</h2><div class="sub">설정 › 가족방 상세 관리 · 역할별 권한 적용</div><h4>목적</h4><ul><li>현재 입장한 가족방의 정보와 구성원을 확인하고, 사용자 역할에 허용된 관리 작업만 수행한다.</li></ul><h4>방장에게 표시</h4><ul><li>가족방 이름 변경, 구성원 내보내기, 방장 권한 이전</li><li>초대 링크 복사·재발급·무효화</li><li>기록 내보내기, 인원 한도 확장, 가족방 삭제</li></ul><h4>일반 구성원에게 표시</h4><ul><li>가족방 이름과 구성원 목록은 읽기 전용</li><li>초대 권한이 허용된 방에서만 초대 링크 복사</li><li>내 방 프로필 변경, 가족 기록 내보내기 요청, 가족방 나가기</li><li>이름 변경·구성원 내보내기·권한 이전·방 삭제는 숨김 처리</li></ul><h4>인터랙션</h4><ul><li>민감한 작업은 대상과 영향을 재확인하고 관련 구성원에게 알린다.</li><li>방장은 권한을 이전한 뒤에만 방에서 나갈 수 있다.</li><li>방 삭제 전 방 이름을 다시 입력하고 기록 내보내기 여부를 확인한다.</li></ul><p class="note">같은 상세 관리 화면을 사용하되 서버가 반환한 역할 권한을 기준으로 메뉴를 표시하고 실행 시에도 권한을 재검증한다.</p></div>
+</section>
+
+<!-- 12 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">설정</div><div class="content">
+    <div class="section-title">현재 입장한 가족방</div><div class="card"><div class="between"><div class="row"><span class="av me">나</span><div><b class="body">은서네</b><div class="small muted">은서 · 딸 · 방장</div></div></div><span class="badge">기본</span></div></div>
+    <div class="section-title">가족방별 내 프로필</div><div class="card"><div class="row"><span class="av me">나</span><div style="flex:1"><b class="body">프로필 이미지</b><div class="small muted">나를 나타낼 캐릭터를 선택해 주세요</div></div><span style="color:var(--green)">변경 ›</span></div><div class="chip-row" style="padding:12px 0 2px"><span class="chip on">👩</span><span class="chip">👨</span><span class="chip">👩‍🦰</span><span class="chip">👴</span><span class="chip">👧</span></div><div class="input" style="margin-top:10px">호칭 · 딸</div></div>
+    <div class="section-title">내 생년월일</div><div class="card"><div class="chip-row" style="padding:0 0 8px"><span class="chip on">양력</span><span class="chip">음력</span></div><div class="input">1994. 11. 08</div><div class="between body" style="margin-top:10px"><span>가족 일정에 생일 표시</span><span style="color:var(--green)">켬</span></div><p class="small muted">저장하면 모든 가족방 일정에 ‘은서 생일’이 매년 자동 등록됩니다.</p></div>
+    <div class="section-title">알림</div><div class="card"><div class="between body"><span>매일 질문</span><span style="color:var(--green)">켬</span></div><div class="between body" style="margin-top:12px"><span>질문 알림 시간</span><span class="muted">오후 7:30</span></div><div class="between body" style="margin-top:12px"><span>일정·할 일 알림</span><span style="color:var(--green)">켬</span></div></div>
+    <div class="section-title">가족방 관리</div><div class="card"><div class="between body"><span>가족방 상세 관리</span><span style="color:var(--green)">열기 ›</span></div><div class="small muted" style="margin-top:7px">방장: 이름·구성원·초대·삭제 관리</div><div class="small muted" style="margin-top:4px">구성원: 방 정보 확인·내 프로필·나가기</div></div>
+  </div></div></div>
+  <div class="desc"><span class="num">12</span><h2>사용자 설정</h2><div class="sub">개인 설정 · 현재 방 프로필과 역할별 관리</div><h4>목적</h4><ul><li>현재 입장한 가족방에서 사용할 프로필·생일·알림을 관리하고 역할에 맞는 가족방 상세 관리로 진입한다.</li></ul><h4>주요 구성요소</h4><ul><li>현재 입장한 가족방 정보와 내 역할 표시</li><li>현재 방의 호칭과 나를 나타낼 캐릭터 선택</li><li>내 생년월일, 양력·음력, 가족 일정 표시 여부</li><li>매일 질문과 일정·할 일 알림 설정</li><li>역할별 가족방 상세 관리 진입</li></ul><h4>생일 자동 일정</h4><ul><li>사용자는 본인의 생년월일만 등록·변경할 수 있으며 양력 또는 음력을 선택한다.</li><li>‘가족 일정에 생일 표시’를 켜면 참여 중인 모든 가족방에 매년 반복 생일이 자동 생성된다.</li><li>자동 생성된 생일은 일정 화면에서 🔒로 표시하고 수정·삭제를 허용하지 않는다.</li><li>날짜 체계 변경, 생일 수정·삭제는 설정에서만 가능하며 모든 가족방 일정에 동기화한다.</li></ul><h4>인터랙션</h4><ul><li>설정에서 다른 가족방으로 전환하는 기능은 제공하지 않는다.</li><li>프로필 변경은 현재 가족방에만 적용하지만 생년월일은 계정 공통 정보로 적용한다.</li><li>가족방 상세 관리를 열면 역할에 허용된 메뉴만 확인한다.</li></ul><p class="note">프로필은 선택형 캐릭터 이미지를 사용한다. 가족방 전환은 앱 최초 진입 화면에서만 처리한다.</p></div>
+</section>
+
+<!-- 13 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">← 이용 한도 늘리기</div><div class="content">
+    <div class="hero" style="text-align:center;padding-top:24px"><span class="badge">필요한 항목만 선택</span><h3 style="margin-top:10px">더 큰 가족도 함께</h3><p>기능은 그대로 무료. 방 개수와 참여 인원만 확장해요.</p></div>
+    <div class="card"><div class="row"><span style="font-size:22px">👥</span><div><b class="body">이 방의 인원 확장권</b><div class="small muted">거제도친척방 · 현재 10명</div></div><span class="badge" style="margin-left:auto">1회 결제</span></div><p class="small muted">방장이 한 번 결제하면 이 가족방에 11명 이상 계속 초대할 수 있어요.</p><div class="btn" style="margin-top:10px">방장으로 인원 확장권 구매</div></div>
+    <div class="card"><div class="row"><span style="font-size:22px">▣</span><div><b class="body">가족방 추가권</b><div class="small muted">무료 3개를 넘어 가족방 추가 생성</div></div><span class="badge" style="margin-left:auto">1회 결제</span></div><p class="small muted">방장이 한 번 구매할 때 가족방 생성 가능 수가 영구적으로 늘어납니다.</p><div class="btn-light" style="padding:9px;text-align:center;border-radius:8px;font-size:11.5px;font-weight:700">가족방 추가권 구매</div></div>
+    <div class="card"><b class="body">계속 무료로 쓸 수 있어요</b><p class="small muted">방 3개·방별 10명 이하라면 기록, 영상, 일정, 할 일을 제한 없이 이용합니다.</p></div>
+  </div></div></div>
+  <div class="desc"><span class="num">13</span><h2>1회성 한도 확장</h2><div class="sub">방 개수 또는 참여 인원 한도 초과 시 진입</div><h4>목적</h4><ul><li>구독 없이 필요한 한도만 한 번 구매해 영구적으로 확장한다.</li></ul><h4>주요 구성요소</h4><ul><li>가족방 4개 이상: 계정의 가족방 추가권 1회 결제</li><li>방별 10명 초과: 해당 가족방의 인원 확장권 1회 결제</li><li>두 상품 모두 방장만 구매 가능</li></ul><h4>인터랙션</h4><ul><li>인원 확장권 결제 후 중단했던 구성원 초대로 복귀한다.</li><li>가족방 추가권 결제 후 중단했던 방 생성으로 복귀한다.</li><li>구매 복원 기능으로 동일 계정의 재설치 기기에서도 권리를 복구한다.</li></ul><p class="note">정기 결제와 자동 갱신은 사용하지 않는다.</p></div>
+</section>
+
+<!-- 14 -->
+<section class="screen-block">
+  <div class="phone"><div class="phone-inner"><div class="notch"></div><div class="status"><span>9:41</span><span>📶 🛜 🔋</span></div><div class="top">← 7월 포토북</div><div class="content">
+    <div class="hero"><h3>은서네 7월 기록이 한 권으로 완성됐어요</h3><p>평범했던 하루가 넘겨보고 싶은 가족 앨범이 됩니다.</p></div><div class="card book"><div class="cover album-cover" role="img" aria-label="가족사진이 담긴 포토앨범 표지"></div><div><span class="badge">자동 편집 완료</span><h3 style="font-size:14px;margin:7px 0 3px">우리 가족의 7월</h3><div class="small muted">사진 42장 · 글 18개 · 28페이지</div><div style="margin-top:9px"><b>29,900원</b></div></div></div>
+    <div class="section-title">실물 미리보기</div><div class="card"><div class="photobook-preview" role="img" aria-label="김밥, 베란다 토마토, 거제도 여행과 생일 사진으로 편집한 은서네 포토북"></div><div class="between" style="margin-top:10px"><span class="small muted">펼침면 6–7 / 28페이지</span><span class="small" style="color:var(--green)">전체 미리보기 ›</span></div><p class="small muted">무광 하드커버 · 200×200mm · 가족 글 원문 포함</p></div>
+    <div class="section-title">옵션</div><div class="card"><div class="between body"><span>하드커버 · 28페이지</span><b>29,900원</b></div><div class="between body" style="margin-top:12px"><span>수량</span><span class="row"><span class="chip">−</span><b>1</b><span class="chip on">＋</span></span></div><div class="between body" style="margin-top:12px"><span>배송비</span><span class="muted">5만원 이상 구매 시 무료배송</span></div></div><div class="card"><div class="btn">1권 · 29,900원 주문하기</div></div>
+  </div></div></div>
+  <div class="desc"><span class="num">14</span><h2>포토북 미리보기 / 구매</h2><div class="sub">추억 화면 하단에서 선택 진입</div><h4>목적</h4><ul><li>한 달 또는 1년 동안 쌓인 글과 사진을 자동 편집된 실물 결과물로 판매한다.</li></ul><h4>주요 구성요소</h4><ul><li>기간·사진·글 자동 선별 및 페이지 배치</li><li>표지, 사진 순서, 글 포함 여부 편집</li><li>규격·페이지·가격·배송 정보</li></ul><h4>인터랙션</h4><ul><li>사용자가 미리보기를 확인한 후에만 주문 단계로 이동한다.</li><li>원본 기록은 변경하지 않고 포토북 편집본만 수정한다.</li><li>월간·연간 포토북은 한도 확장권 구매 여부와 무관하게 누구나 구매할 수 있다.</li></ul><p class="note">수익화 포인트지만 추억 탐색을 방해하지 않는다.</p></div>
+</section>
+
+</main>
+<script>
+  const flowGroups = [
+    { heading:'핵심 기능', screens:['통합 홈','오늘의 가족 피드','가족 게시물 상세','오늘 기록하기','가족 일정','공동 할 일','추억 모아보기','포토북 미리보기 / 구매'] },
+    { heading:'초대 / 시작', screens:['가족방 선택 / 앱 첫 화면','가족방 생성','가족 초대'] },
+    { heading:'설정 / 관리', screens:['사용자 설정','가족방 상세 관리','1회성 한도 확장'] }
+  ];
+  const flowOrder = flowGroups.flatMap(group => group.screens);
+  const flowReferences = {
+    '가족방 선택 / 앱 첫 화면': [['화면3 통합 홈','핵심 기능 화면1 통합 홈'],['화면1 가족방 생성','초대/시작 화면2 가족방 생성']],
+    '가족방 생성': [['화면2로 이동','초대/시작 화면3으로 이동']],
+    '통합 홈': [['화면4 오늘의 가족 피드','화면2 오늘의 가족 피드'],['화면6 게시물 상세','화면3 게시물 상세'],['화면5 오늘 기록하기','화면4 오늘 기록하기'],['화면12로 이동','설정/관리 화면1로 이동']],
+    '오늘의 가족 피드': [['화면5 오늘 기록하기','화면4 오늘 기록하기']],
+    '공동 할 일': [['화면7 오늘 기록하기','화면4 오늘 기록하기'],['화면5 오늘 기록하기','화면4 오늘 기록하기']],
+    '추억 모아보기': [['화면6에서','화면3에서'],['화면7 오늘 기록하기','화면4 오늘 기록하기'],['화면5 오늘 기록하기','화면4 오늘 기록하기'],['화면14에 이동','화면8에 이동']]
+  };
+  const flowRoot = document.querySelector('.wrap');
+  const flowScreens = [...flowRoot.querySelectorAll('.screen-block')];
+  const flowByTitle = new Map(flowScreens.map(screen => [screen.querySelector('.desc h2').textContent.trim(), screen]));
+  flowGroups.forEach(group => {
+    let flowNumber = 1;
+    const heading = document.createElement('h2');
+    heading.className = 'flow-section-heading';
+    heading.textContent = group.heading;
+    flowRoot.appendChild(heading);
+    group.screens.forEach(title => {
+      const screen = flowByTitle.get(title);
+      if (!screen) return;
+      screen.querySelector('.num').textContent = String(flowNumber++);
+      for (const [before, after] of flowReferences[title] || []) {
+        screen.querySelector('.desc').innerHTML = screen.querySelector('.desc').innerHTML.replaceAll(before, after);
+      }
+      flowRoot.appendChild(screen);
+    });
+  });
+</script>
+</body>
+</html>
